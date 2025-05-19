@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duty Time Validator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="time"] {
+            padding: 5px;
+            width: 150px;
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button.remove {
+            background-color: #f44336;
+        }
+        .break-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .break-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Duty Time Validator</h1>
+    
+    <form id="dutyForm">
+        <div class="form-group">
+            <h2>Duty Times</h2>
+            <div class="form-group">
+                <label for="dutyStart">Duty Start Time:</label>
+                <input type="time" id="dutyStart" required>
+            </div>
+            <div class="form-group">
+                <label for="dutyEnd">Duty End Time:</label>
+                <input type="time" id="dutyEnd" required>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <h2>Breaks</h2>
+            <div id="breaksContainer"></div>
+            <button type="button" id="addBreak">Add Break</button>
+        </div>
+        
+        <button type="submit" id="validateButton">Validate Duty</button>
+    </form>
+    
+    <div id="output">
+        <h3>Validation Output:</h3>
+        <pre id="validationOutput"></pre>
+    </div>
+    
+    <script>
+        // Function to create a new break row
+        function createBreakRow(index) {
+            const breakRow = document.createElement('div');
+            breakRow.className = 'break-row';
+            breakRow.dataset.index = index;
+            
+            breakRow.innerHTML = `
+                <div class="break-inputs">
+                    <div>
+                        <label for="breakStart${index}">Break Start:</label>
+                        <input type="time" id="breakStart${index}" class="breakStart" required>
+                    </div>
+                    <div>
+                        <label for="breakEnd${index}">Break End:</label>
+                        <input type="time" id="breakEnd${index}" class="breakEnd" required>
+                    </div>
+                </div>
+                <button type="button" class="remove">Remove</button>
+            `;
+            
+            return breakRow;
+        }
+        
+        // Function to validate duty
+        function validateDuty(duty, breaks) {
+            // This function is empty as requested, just logging the inputs
+            console.log('Duty:', duty);
+            console.log('Breaks:', breaks);
+            
+            // Display the inputs in the output area
+            const output = document.getElementById('validationOutput');
+            output.textContent = 'Duty: ' + JSON.stringify(duty, null, 2) + 
+                               '\n\nBreaks: ' + JSON.stringify(breaks, null, 2);
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const breaksContainer = document.getElementById('breaksContainer');
+            const addBreakButton = document.getElementById('addBreak');
+            const dutyForm = document.getElementById('dutyForm');
+            let breakCounter = 0;
+            
+            // Add a break row
+            addBreakButton.addEventListener('click', function() {
+                const breakRow = createBreakRow(breakCounter++);
+                breaksContainer.appendChild(breakRow);
+                
+                // Add event listener to the remove button
+                const removeButton = breakRow.querySelector('.remove');
+                removeButton.addEventListener('click', function() {
+                    breakRow.remove();
+                });
+            });
+            
+            // Handle form submission
+            dutyForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Collect duty data
+                const duty = {
+                    startTime: document.getElementById('dutyStart').value,
+                    endTime: document.getElementById('dutyEnd').value
+                };
+                
+                // Collect breaks data
+                const breaks = [];
+                const breakRows = breaksContainer.querySelectorAll('.break-row');
+                
+                breakRows.forEach(row => {
+                    const startTime = row.querySelector('.breakStart').value;
+                    const endTime = row.querySelector('.breakEnd').value;
+                    
+                    breaks.push({
+                        startTime: startTime,
+                        endTime: endTime
+                    });
+                });
+                
+                // Call the validation function
+                validateDuty(duty, breaks);
+            });
+            
+            // Add an initial break row
+            addBreakButton.click();
+        });
+    </script>
+</body>
+</html>
