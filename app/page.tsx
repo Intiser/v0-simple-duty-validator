@@ -77,13 +77,7 @@ export default function DutyTimeValidator() {
     endTime: { hour: 16, minute: 0, isNextDay: false },
   })
 
-  const [breaks, setBreaks] = useState<Break[]>([
-    {
-      id: "1",
-      startTime: { hour: 12, minute: 0, isNextDay: false },
-      endTime: { hour: 13, minute: 0, isNextDay: false },
-    },
-  ])
+  const [breaks, setBreaks] = useState<Break[]>([])
 
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
 
@@ -178,6 +172,11 @@ export default function DutyTimeValidator() {
       result.dutyDurationMinutes = dutyDuration
     }
 
+    // If there are no breaks, just continue with validation
+    if (breaks.length === 0) {
+      console.log("No breaks provided")
+    }
+
     // Calculate break durations and check each break
     breaks.forEach((breakItem, index) => {
       const breakNumber = index + 1
@@ -232,15 +231,15 @@ export default function DutyTimeValidator() {
     result.issues = [...new Set(result.issues)]
 
     // Check legal requirements
-    // const isLegalDuty = validateLegalDuty(duty, breaks)
+    const isLegalDuty = validateLegalDuty(duty, breaks)
 
     // If not legal, add the legal issue and set isValid to false
-    // if (!isLegalDuty) {
-    //   result.legalIssues.push(
-    //     "Legal requirement: Duty duration exceeds 6 hours and requires at least one 30-minute break",
-    //   )
-    //   result.isValid = false
-    // }
+    if (!isLegalDuty) {
+      result.legalIssues.push(
+        "Legal requirement: Duty duration exceeds 6 hours and requires at least one 30-minute break",
+      )
+      result.isValid = false
+    }
 
     return result
   }
@@ -555,7 +554,6 @@ export default function DutyTimeValidator() {
                       variant="destructive"
                       size="icon"
                       className="mt-8"
-                      disabled={breaks.length === 1}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
