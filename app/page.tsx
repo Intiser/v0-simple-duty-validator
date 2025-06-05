@@ -49,22 +49,13 @@ const calculateDuration = (startTime: Time, endTime: Time): number => {
 
 // Function to validate legal duty requirements - returns boolean
 const validateLegalDuty = (duty: Duty, breaks: Break[]): boolean => {
-  // Calculate duty duration
-  const dutyDuration = calculateDuration(duty.startTime, duty.endTime)
+  // TODO: Complete this method to check the legality of the duty
+  // This method should validate legal requirements such as:
+  // - Maximum duty duration limits
+  // - Required break durations based on duty length
+  // - Minimum rest periods between duties
+  // - Any other regulatory compliance checks
 
-  // Check if duty duration is more than 6 hours (360 minutes)
-  if (dutyDuration > 360) {
-    // Check if there is at least one break of 30 minutes or longer
-    const hasLongBreak = breaks.some((breakItem) => {
-      const breakDuration = calculateDuration(breakItem.startTime, breakItem.endTime)
-      return breakDuration >= 30
-    })
-
-    // Return true if legal requirements are met, false otherwise
-    return hasLongBreak
-  }
-
-  // If duty is less than 6 hours, no 30-minute break is required
   return true
 }
 
@@ -241,15 +232,15 @@ export default function DutyTimeValidator() {
     result.issues = [...new Set(result.issues)]
 
     // Check legal requirements
-    const isLegalDuty = validateLegalDuty(duty, breaks)
+    // const isLegalDuty = validateLegalDuty(duty, breaks)
 
     // If not legal, add the legal issue and set isValid to false
-    if (!isLegalDuty) {
-      result.legalIssues.push(
-        "Legal requirement: Duty duration exceeds 6 hours and requires at least one 30-minute break",
-      )
-      result.isValid = false
-    }
+    // if (!isLegalDuty) {
+    //   result.legalIssues.push(
+    //     "Legal requirement: Duty duration exceeds 6 hours and requires at least one 30-minute break",
+    //   )
+    //   result.isValid = false
+    // }
 
     return result
   }
